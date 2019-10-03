@@ -1,0 +1,25 @@
+---
+  - name: http
+    package:
+      name: httpie
+      state: latest
+    when: inventory_hostname in groups['frontends']
+  - name: install HAProxy
+    yum:
+      name=haproxy state=latest
+    when: inventory_hostname in groups['frontends']
+  - name: enable HAProxy
+    service:
+      name: haproxy
+      state: started
+    when: inventory_hostname in groups['frontends']
+  - name: configure haproxy
+    copy:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+    when: inventory_hostname in groups['frontends']
+  - name: restart HAproxy
+    service:
+      name: haproxy
+      state: restarted
+    when: inventory_hostname in groups['frontends']
